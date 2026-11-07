@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#edf1e8">
+  <meta name="description" content="Новогодняя игра с телефонным шифром: расшифруй 15 желаний детей, собери подарки и отправь пять ответных SMS Деду Морозу.">
+  <title>Алло, Дед Мороз! Расшифруй желание</title>
+  <link rel="stylesheet" href="files/style.css">
+  <script src="files/letters.js" defer></script>
+  <script src="files/mechanics.js" defer></script>
+  <script src="files/rules.js" defer></script>
+  <script src="files/engine.js" defer></script>
+  <script src="files/game.js" defer></script>
+  <script src="files/print-preview.js" defer></script>
+</head>
+<body>
+  <div id="app" class="app" data-view="home">
+    <header class="header"><button class="brand" id="home-button" aria-label="На главную"><span class="brand-mark" aria-hidden="true">✳</span><span>Алло, Дед Мороз!<small>Расшифруй желание</small></span></button><span class="header-caption">Маленькая мастерская большого праздника</span><div class="header-actions"><button class="quiet-button" id="guide-button">Учителю</button><button class="icon-button" id="sound-button" aria-label="Выключить звук" aria-pressed="true">♫</button></div></header>
+    <div id="gamebar" class="gamebar" hidden><ol id="stage-progress" class="stage-progress" aria-label="Пять этапов игры"></ol><div class="game-stats"><span class="stat-pill"><span aria-hidden="true">◷</span><span id="timer">0:00</span></span><span class="stat-pill"><span aria-hidden="true">◇</span><span id="gift-count">0 / 15</span></span><button id="awards-button" class="stat-pill" aria-label="Посмотреть награды">✦ <span id="award-count">0 / 8</span></button></div></div>
+    <main id="main">
+      <section id="home-screen" class="screen home-screen" aria-labelledby="home-title">
+        <div class="cover-copy"><span class="eyebrow">НОВОГОДНЯЯ МАСТЕРСКАЯ</span><h1 id="home-title" tabindex="-1">Алло, Дед Мороз!</h1><p class="cover-subtitle">Расшифруй желание</p><p class="cover-intro">Дети прислали секретные SMS. Разгадай их желания и помоги собрать подарки к празднику.</p><ol class="how"><li><b>1</b><span><strong>Открой SMS</strong><small>Вместо букв — цифры.</small></span></li><li><b>2</b><span><strong>Найди подарок</strong><small>Ключ — буквы на клавишах.</small></span></li><li><b>3</b><span><strong>Отправь ответ</strong><small>После каждых трёх желаний.</small></span></li><li><b>4</b><span><strong>Подготовь праздник</strong><small>15 подарков и 5 ответных SMS.</small></span></li></ol><div class="home-actions"><button id="continue-button" class="button primary" hidden>Продолжить →</button><button id="start-button" class="button primary">Начать игру →</button></div><p class="home-note">Одна цифра — одна буква. Например: <strong>408 → МЯЧ</strong>.<br>Играй в своём темпе: время не ограничено.</p></div>
+        <div class="cover-art"><div class="cover-halo" aria-hidden="true"></div><img src="files/img/ded-happy.png" alt="Дед Мороз приглашает в мастерскую"><span class="art-tag">Каждое желание найдёт подарок</span></div>
+      </section>
+
+      <section id="incoming-screen" class="screen incoming-screen" aria-labelledby="incoming-title" hidden>
+        <div class="section-top"><span id="incoming-stage" class="eyebrow"></span><span id="incoming-position" class="muted"></span></div>
+        <div class="incoming-layout"><div class="device-area"><div id="incoming-phone" class="phone"></div></div><div class="incoming-copy"><span class="new-message">● ВХОДЯЩЕЕ СООБЩЕНИЕ</span><h1 id="incoming-title" tabindex="-1"></h1><p id="incoming-message" class="message-bubble"></p><button id="open-button" class="button primary">Открыть SMS <span aria-hidden="true">→</span></button><p class="muted incoming-help">Расшифруй название по буквам на клавишах и найди подарок в мастерской.</p><div class="helper-note"><img src="files/img/ded-sms.png" alt="Дед Мороз читает SMS"><p>Телефон останется рядом.<br>Внимательно сверяй каждую цифру!</p></div></div></div>
+      </section>
+
+      <section id="workshop-screen" class="screen workshop-screen" aria-labelledby="workshop-title" hidden>
+        <div class="section-top"><div><span id="workshop-stage" class="eyebrow"></span><h1 id="workshop-title" tabindex="-1"></h1></div><span id="wish-position" class="muted"></span></div>
+        <div class="workshop-layout"><div class="phone-column"><div class="device-area"><div id="workshop-phone" class="phone"></div></div><p class="phone-help">Одна цифра — одна буква.<br>Найди слово среди подарков.</p></div><div class="store"><div class="store-heading"><h2>Мастерская подарков</h2><span>Выбери нужную ячейку</span></div><div id="gifts" class="gift-grid"></div><nav id="gift-pager" class="gift-pager" aria-label="Полки с подарками"></nav></div></div>
+        <div id="gift-feedback" class="feedback-bar" role="status"><div><strong id="gift-feedback-title">Какое желание зашифровано?</strong><p id="gift-feedback-text">Сверься с клавишами телефона и выбери подарок.</p></div><button id="gift-next" class="button primary" hidden>Следующее SMS →</button></div>
+      </section>
+
+      <section id="reply-screen" class="screen reply-screen" aria-labelledby="reply-title" hidden>
+        <div class="section-top"><span id="reply-stage" class="eyebrow"></span><span id="reply-position" class="muted"></span></div>
+        <div class="reply-layout"><div class="device-area"><div id="reply-phone" class="phone"></div></div><div class="reply-copy"><span class="new-message">↩ ОТВЕТНОЕ SMS</span><h1 id="reply-title" tabindex="-1">Теперь зашифруй сам!</h1><p class="reply-intro">Выбери, как написать это слово цифрами.</p><div class="reply-gift"><img id="reply-image" alt=""><div><span>ПОДАРОК ДЛЯ СООБЩЕНИЯ</span><strong id="reply-word"></strong></div></div><div id="reply-choices" class="reply-choices" aria-label="Варианты цифрового кода"></div><p id="reply-feedback" class="reply-feedback" role="status"></p><button id="reply-next" class="button primary" hidden>Следующий этап →</button></div></div>
+      </section>
+
+      <section id="finish-screen" class="screen finish-screen" aria-labelledby="finish-title" hidden>
+        <div class="finish-top"><div><span class="eyebrow">ВСЕ ПЯТЬ ЭТАПОВ ЗАВЕРШЕНЫ</span><h1 id="finish-title" tabindex="-1">Праздник готов!</h1><p>Все желания расшифрованы, подарки собраны,<br>ответные сообщения отправлены.</p></div><img src="files/img/ded-happy.png" alt="Дед Мороз благодарит за помощь"></div><div id="finish-stats" class="finish-stats"></div><div class="finish-tabs" role="tablist" aria-label="Результаты"><button id="awards-tab" role="tab" aria-selected="true" aria-controls="finish-awards-panel">Награды</button><button id="gifts-tab" role="tab" aria-selected="false" aria-controls="finish-gifts-panel">Подарки</button></div><div id="finish-content" class="finish-content" data-panel="awards"><div id="finish-awards-panel" role="tabpanel" aria-labelledby="awards-tab"><h2>Твои награды</h2><div id="finish-awards" class="award-list"></div></div><div id="finish-gifts-panel" role="tabpanel" aria-labelledby="gifts-tab"><h2>Подарки для ребят</h2><div id="finish-gifts" class="finish-gifts"></div><nav id="finish-pages" class="finish-pages" aria-label="Этапы с подарками"></nav></div></div><div class="finish-actions"><button id="diploma-button" class="button primary">Получить грамоту</button><button id="restart-button" class="button secondary">Новая игра</button><button id="finish-guide" class="quiet-button">Методичка для учителя</button></div>
+      </section>
+      <noscript>Для игры нужно включить JavaScript в браузере.</noscript>
+    </main>
+    <footer class="footer"><span id="save-status" role="status">Прогресс сохраняется в этом браузере</span><span class="footer-motto">Расшифровываем желания. Создаём праздник.</span></footer>
+  </div>
+
+  <dialog id="awards-modal" class="modal" aria-labelledby="awards-title"><div class="modal-heading"><h2 id="awards-title">Твои награды</h2><button class="quiet-button" id="awards-close" autofocus>Закрыть</button></div><p class="modal-note">Награды помогают замечать успехи. Ошибки не закрывают путь к празднику.</p><div id="all-awards" class="award-list"></div></dialog>
+  <dialog id="guide-modal" class="modal guide-modal" aria-labelledby="guide-title"><div class="modal-heading"><h2 id="guide-title">Методичка для учителя</h2><button class="quiet-button" id="guide-close" autofocus>Закрыть</button></div><iframe id="guide-frame" title="Инструкция, ответы и награды" data-src="files/guide.html"></iframe></dialog>
+  <dialog id="diploma-modal" class="modal diploma-modal" aria-labelledby="diploma-title"><div id="diploma" class="diploma">
+    <div class="diploma-content"><p class="diploma-kicker">НОВОГОДНЯЯ МАСТЕРСКАЯ</p>
+    <h2 id="diploma-title">Грамота</h2><p class="diploma-rank">помощника Деда Мороза</p><p class="diploma-presented">С благодарностью вручается</p>
+    <label for="diploma-name" class="sr-only">Имя получателя грамоты</label><input id="diploma-name" maxlength="40" placeholder="Впиши своё имя" autocomplete="off"><div id="diploma-print-name" class="diploma-print-name is-empty" aria-hidden="true"></div>
+    <p class="diploma-praise">За <strong>15 расшифрованных желаний</strong>,<br>собранные подарки и <strong>5 ответных SMS</strong>.</p><p class="diploma-thanks">Спасибо за помощь!<br>С тобой праздник стал ближе.</p>
+    <p class="diploma-sign">С благодарностью,<strong>Дед Мороз</strong></p></div>
+    <img class="diploma-santa" src="files/img/ded-happy.png" alt="Дед Мороз поздравляет с завершением игры">
+  </div><div class="modal-actions"><button id="print-button" class="button primary">Распечатать</button><button id="diploma-close" class="button secondary">Закрыть</button></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

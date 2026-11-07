@@ -1,0 +1,19 @@
+@charset "UTF-8";
+*{box-sizing:border-box}body{margin:0;background:#f3f6ed;color:#344b40;font:15px/1.7 "Segoe UI",Arial,sans-serif}header,main{width:min(880px,100%);margin:auto;padding:28px 32px}header{background:#fffef9;border-bottom:1px solid #dce5d1}header>span{font-size:10px;letter-spacing:1.6px;color:#97a478;font-weight:700}h1{font-size:31px;line-height:1.2;color:#3e6752;margin:13px 0}header p{font-size:13px;color:#8d9d80}button{background:#456e58;color:#fff;border:0;border-radius:9px;padding:10px 15px;font:inherit;font-size:12px;cursor:pointer;margin-top:15px}main{padding-top:9px}section{margin:23px 0;padding-bottom:20px;border-bottom:1px solid #dfe6d5}h2{font-size:20px;color:#536f52;margin:0 0 12px}p{margin:10px 0}li{margin:7px 0}table{width:100%;border-collapse:collapse;font-size:12px;background:#fffef9}th,td{padding:9px 10px;border:1px solid #dce5d1;text-align:left;overflow-wrap:anywhere}th{background:#e6eedc;color:#5c7750}.code{font-family:monospace;font-size:14px;letter-spacing:1px}.keyboard{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.keyboard span{display:flex;gap:8px;justify-content:center;align-items:center;background:#fffef9;border:1px solid #dce5d1;padding:8px;border-radius:8px;font-size:12px}.keyboard b{font-size:19px;color:#597c56}code{font-size:12px;color:#5d7d57}@media(max-width:550px){header,main{padding:20px}h1{font-size:25px}h2{font-size:18px}body{font-size:13px}.keyboard{grid-template-columns:repeat(2,1fr)}th,td{padding:7px;font-size:10px}.code{font-size:11px;letter-spacing:.5px}}@media print{@page{size:A4;margin:15mm}body{background:#fff;color:#22352b;font-size:10pt}header,main{width:100%;padding:0}header button{display:none}h1{font-size:23pt}h2{font-size:14pt;break-after:avoid}section{margin:6mm 0;padding-bottom:5mm}table{font-size:9pt;break-inside:auto}tr{break-inside:avoid}thead{display:table-header-group}th,td{padding:2mm}.keyboard{grid-template-columns:repeat(5,1fr);break-inside:avoid}.code{font-size:10pt}p,li{orphans:3;widows:3}header,th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+/* Explicit print boundaries keep headings attached to the complete reference blocks. */
+@media print {
+  .print-new-page {
+    page-break-before: always;
+    break-before: page;
+    margin-top: 0;
+  }
+  .print-keep {
+    page-break-inside: avoid;
+    break-inside: avoid-page;
+  }
+  h2 {
+    page-break-after: avoid;
+    break-after: avoid-page;
+  }
+}
