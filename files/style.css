@@ -3078,6 +3078,11 @@ body:has(#diploma-modal[open]) .app{
 }
 
 #screen-print-preview { display: none; }
+@keyframes sms-arrive {
+  0%, 40%, 80% { transform: rotate(-3deg); }
+  20%, 60% { transform: rotate(3deg); }
+  100% { transform: none; }
+}
 @media print {
   body.printing-screen-preview > .app { display: none !important; }
   /* A top-layer dialog does not give body any layout height. The root canvas

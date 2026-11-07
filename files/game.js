@@ -13,6 +13,27 @@ function elapsed(){return game.data.elapsedMs+(timerOrigin===null?0:Math.max(0,D
 function stopTimer(){if(timerOrigin!==null){const ms=elapsed();timerOrigin=null;game.time(ms);}if(timerId!==null)clearInterval(timerId);timerId=null;}
 function startTimer(){if(game.data.phase!=='decode'||document.hidden||timerOrigin!==null)return;timerOrigin=Date.now();timerId=setInterval(()=>{$('timer').textContent=format(elapsed());},250);}
 let audio=null;
+function incomingAlert(){
+  const device=$('incoming-phone');
+  device.style.animation='none';void device.offsetWidth;
+  device.style.animation='sms-arrive .6s ease';
+  if(!game.data.sound)return;
+  try{
+    audio=audio||new(window.AudioContext||window.webkitAudioContext)();
+    audio.resume?.()?.catch?.(()=>{});
+    const start=audio.currentTime;
+    // The two triangle tones from the original incoming-SMS effect.
+    [{f:900,at:0,d:.06},{f:700,at:.07,d:.08}].forEach(note=>{
+      const oscillator=audio.createOscillator(),gain=audio.createGain(),at=start+note.at;
+      oscillator.type='triangle';oscillator.frequency.setValueAtTime(note.f,at);
+      gain.gain.setValueAtTime(.0001,at);
+      gain.gain.exponentialRampToValueAtTime(.06,at+.02);
+      gain.gain.exponentialRampToValueAtTime(.0001,at+note.d);
+      oscillator.connect(gain);gain.connect(audio.destination);
+      oscillator.start(at);oscillator.stop(at+note.d+.03);
+    });
+  }catch{}
+}
 function sound(correct=true){if(!game.data.sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume?.();[correct?660:260,correct?880:210].forEach((frequency,index)=>{const oscillator=audio.createOscillator(),gain=audio.createGain(),at=audio.currentTime+index*.1;oscillator.type='sine';oscillator.frequency.value=frequency;gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(.08,at+.015);gain.gain.exponentialRampToValueAtTime(.0001,at+.16);oscillator.connect(gain);gain.connect(audio.destination);oscillator.start(at);oscillator.stop(at+.18);});}catch{}}
 function status(){
   $('save-status').textContent=game.persistent?'Прогресс сохраняется в этом браузере':'Сохранение недоступно — прогресс только до обновления страницы';
@@ -28,7 +49,7 @@ function phone(id,options){
   const code=options.code?`<div class="phone-code">${esc(options.code)}</div>`:`<div class="phone-envelope" aria-hidden="true">✉<span>1</span></div>`;
   $(id).innerHTML=`<div class="phone-speaker" aria-hidden="true"></div><div class="phone-display"><div class="phone-status"><span>ДЕД МОРОЗ</span><span aria-hidden="true">▮▮▮ ▰</span></div><div class="phone-heading">${esc(options.heading)}</div>${code}<div class="phone-caption">${esc(options.caption||'')}</div></div><div class="phone-nav" aria-hidden="true"><span>●</span><span>▣</span><span>↩</span></div><div class="phone-keypad" aria-label="Ключ к шифру">${PHONE_KEYS.map(key=>`<div class="phone-key"><b>${key.digit}</b><span>${key.letters}</span></div>`).join('')}</div>`;
 }
-function incoming(){const letter=game.letter();$('incoming-stage').textContent=`ЭТАП ${game.stage()+1} · ${STAGES[game.stage()].title.toLocaleUpperCase('ru')}`;$('incoming-position').textContent=`Желание ${game.data.index+1} из 15`;$('incoming-title').textContent=`Новое SMS от ${letter.from}!`;$('incoming-message').textContent='В сообщении спрятано название подарка. Поможешь прочитать желание?';phone('incoming-phone',{heading:`От: ${letter.name}`,caption:'Новое сообщение'});show('incoming');}
+function incoming(){const letter=game.letter();$('incoming-stage').textContent=`ЭТАП ${game.stage()+1} · ${STAGES[game.stage()].title.toLocaleUpperCase('ru')}`;$('incoming-position').textContent=`Желание ${game.data.index+1} из 15`;$('incoming-title').textContent=`Новое SMS от ${letter.from}!`;$('incoming-message').textContent='В сообщении спрятано название подарка. Поможешь прочитать желание?';phone('incoming-phone',{heading:`От: ${letter.name}`,caption:'Новое сообщение'});show('incoming');incomingAlert();}
 function workshop(){
   const letter=game.letter(),done=game.data.phase==='gift-done';
   $('workshop-stage').textContent=`ЭТАП ${game.stage()+1} · ${STAGES[game.stage()].title.toLocaleUpperCase('ru')}`;$('workshop-title').textContent=`Что хочет ${letter.name}?`;$('wish-position').textContent=`SMS ${done?game.data.index:game.data.index+1} / 15`;

@@ -43,6 +43,7 @@
       copy.style.cssText=cached.styles.get(original)||'display:none!important;';
       copy.style.setProperty('animation','none','important');
       copy.style.setProperty('transition','none','important');
+      if(original.classList.contains('phone'))copy.style.setProperty('transform','none','important');
       if(original.tagName==='INPUT')copy.value=original.value;
       Array.from(original.children).forEach((child,index)=>freeze(child,copy.children[index]));
     }
